@@ -1,13 +1,5 @@
-// prisma.config.ts
-import "dotenv/config";
-import { defineConfig } from "prisma/config";
+import { PrismaClient } from "@prisma/client";
 
-export default defineConfig({
-  schema: "prisma/schema.prisma",
-  migrations: {
-    path: "prisma/migrations",
-  },
-  datasource: {
-    url: process.env.DATABASE_URL, // PostgreSQL URL
-  },
+export const prisma = new PrismaClient({
+  log: ["query", "info", "warn", "error"],
 });

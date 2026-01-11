@@ -1,13 +1,12 @@
-// Prisma schema for NextAuth (PostgreSQL, Prisma 7+)
-
 generator client {
   provider = "prisma-client-js"
-  output   = "../app/generated/prisma"
+  output   = "app/generated/prisma" // ← chemin vers le client généré
 }
 
 datasource db {
-  provider = "postgresql"  // reste ici
+  provider = "postgresql"
 }
+
 
 // --------------------------
 // User model
@@ -16,6 +15,7 @@ model User {
   id            String    @id @default(cuid())
   name          String?
   email         String?   @unique
+  password      String?   // pour CredentialsProvider
   emailVerified DateTime?
   image         String?
   accounts      Account[]
@@ -23,21 +23,21 @@ model User {
 }
 
 // --------------------------
-// Account model (OAuth / Credentials)
+// Account model
 // --------------------------
 model Account {
-  id                 String   @id @default(cuid())
-  userId             String
-  type               String
-  provider           String
-  providerAccountId  String
-  refresh_token      String?
-  access_token       String?
-  expires_at         Int?
-  token_type         String?
-  scope              String?
-  id_token           String?
-  session_state      String?
+  id                String @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
 
   user User @relation(fields: [userId], references: [id])
 
@@ -57,7 +57,7 @@ model Session {
 }
 
 // --------------------------
-// VerificationToken model (magic link / email login)
+// VerificationToken model
 // --------------------------
 model VerificationToken {
   identifier String
