@@ -1,12 +1,15 @@
+// --------------------------
+// Prisma schema complet
+// --------------------------
+
 generator client {
   provider = "prisma-client-js"
-  output   = "app/generated/prisma" // ← chemin vers le client généré
 }
 
 datasource db {
   provider = "postgresql"
+  url      = env("DATABASE_URL")
 }
-
 
 // --------------------------
 // User model
@@ -15,7 +18,8 @@ model User {
   id            String    @id @default(cuid())
   name          String?
   email         String?   @unique
-  password      String?   // pour CredentialsProvider
+  password      String?
+  role          String    @default("user") // ← obligatoire
   emailVerified DateTime?
   image         String?
   accounts      Account[]
@@ -23,7 +27,7 @@ model User {
 }
 
 // --------------------------
-// Account model
+// Account model (OAuth)
 // --------------------------
 model Account {
   id                String @id @default(cuid())
@@ -57,7 +61,7 @@ model Session {
 }
 
 // --------------------------
-// VerificationToken model
+// VerificationToken model (Email OTP)
 // --------------------------
 model VerificationToken {
   identifier String

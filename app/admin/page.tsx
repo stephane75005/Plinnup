@@ -3,21 +3,20 @@ import { redirect } from "next/navigation";
 import { authOptions, UserWithRole } from "../lib/auth";
 import LogoutButton from "@/components/LogoutButton";
 
-export default async function ChoixPage() {
+export default async function AdminPage() {
   const session = await getServerSession(authOptions);
   if (!session) redirect("/login");
 
   const user = session.user as UserWithRole;
-  const isAdmin = user.role === "admin";
+  if (user.role !== "admin") redirect("/choix");
 
   return (
     <div className="p-8">
-      <h1 className="text-2xl font-bold mb-4">Bienvenue {user.name ?? "utilisateur"}</h1>
-      <p>Choisis où aller :</p>
+      <h1 className="text-2xl font-bold mb-4">Admin Panel</h1>
+      <p>Bonjour {user.name}, vous êtes admin.</p>
 
       <a href="/dashboard" className="m-2 p-2 bg-blue-500 text-white rounded inline-block">Dashboard</a>
-      <a href="/profile" className="m-2 p-2 bg-green-500 text-white rounded inline-block">Profil</a>
-      {isAdmin && <a href="/admin" className="m-2 p-2 bg-red-500 text-white rounded inline-block">Admin</a>}
+      <a href="/choix" className="m-2 p-2 bg-gray-500 text-white rounded inline-block">Retour au choix</a>
 
       <div className="mt-4"><LogoutButton /></div>
     </div>

@@ -9,7 +9,7 @@ export default function LoginPage() {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
-  // Connexion avec Email / Password
+  // Connexion Email / Password
   const handleEmailLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
@@ -19,25 +19,29 @@ export default function LoginPage() {
       const res = await signIn("credentials", {
         email,
         password,
-        redirect: false, // gérer la redirection manuellement
+        redirect: false, // on gère la redirection nous-mêmes
       });
 
       if (res?.ok) {
         window.location.href = "/choix";
       } else {
-        setError(res?.error || "Identifiants invalides");
+        setError(
+          res?.error === "CredentialsSignin"
+            ? "Email ou mot de passe invalide"
+            : res?.error || "Une erreur est survenue"
+        );
       }
     } catch (err) {
-      setError("Une erreur est survenue. Réessayez.");
       console.error(err);
+      setError("Une erreur inattendue est survenue.");
     } finally {
       setLoading(false);
     }
   };
 
-  // Connexion avec OAuth (Google / GitHub)
+  // Connexion OAuth
   const handleOAuthLogin = (provider: "google" | "github") => {
-    signIn(provider, { callbackUrl: "/choix" }); // redirection automatique
+    signIn(provider, { callbackUrl: "/choix" });
   };
 
   return (
@@ -53,7 +57,6 @@ export default function LoginPage() {
       >
         <input
           type="email"
-          name="email"
           placeholder="Email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
@@ -61,7 +64,6 @@ export default function LoginPage() {
         />
         <input
           type="password"
-          name="password"
           placeholder="Mot de passe"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
